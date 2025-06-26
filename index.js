@@ -1,32 +1,32 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const authRoutes = require("./routes/auth");
-
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
+const userAuthRoutes = require("./routes/userAuth");
+const studentAuth=require('./routes/StudentRoutes');
+const schoolRoundRoutes = require("./routes/SchoolRound");
 
 const app = express();
-const adminRoutes = require("./routes/admin");
-app.use("/api/admin", adminRoutes);
-
-
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use("/api/auth", authRoutes);
+
+// Connect to DB
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("Mongo Error:", err));
+
+// Use Routes
+const adminAuthRoutes = require("./routes/adminAuth");
+app.use("/api/admin", adminAuthRoutes); 
 
 
-// Example route
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+app.use("/api", userAuthRoutes);
 
-// Connect to DB and start server
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    app.listen(process.env.PORT || 5000, () => {
-      console.log("Server started on port", process.env.PORT || 5000);
-    });
-  })
-  .catch(err => console.error("DB connection failed:", err));
+app.use("/api/student",studentAuth);
+console.log(typeof schoolRoundRoutes);
+app.use("/api/rounds", schoolRoundRoutes);
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
