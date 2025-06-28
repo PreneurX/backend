@@ -74,12 +74,11 @@ router.get("/class-clash/:school/:classLevel", async (req, res) => {
 });
 
 
-
 router.get("/round2-posts/:school/:category", async (req, res) => {
   const { school, category } = req.params;
 
   try {
-    // Define eligible class names based on category
+    // Map categories to classLevels
     let eligibleClasses = [];
     if (category === "junior") {
       eligibleClasses = ["seventh", "eighth"];
@@ -88,15 +87,17 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
     } else {
       return res.status(400).json({ message: "Invalid category" });
     }
-    console.log(eligibleClasses);
+
+    console.log("Filtering for school:", school, "Classes:", eligibleClasses);
 
     const students = await Student.find({
-      "school.name": school,
-      class: { $in: eligibleClasses },
+      school, // plain string match
+      classLevel: { $in: eligibleClasses },
     }).select("_id name profilePic");
-    console.log(students);
 
-    const studentIds = students.map((s) => s._id);
+    console.log("Students found:", students.length);
+
+    const studentIds = students.map(s => s._id);
 
     const posts = await Post.find({
       studentId: { $in: studentIds },
@@ -109,6 +110,7 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // Get all finale posts across all schools (round: 3)
 router.get("/finale-posts/:category", async (req, res) => {
