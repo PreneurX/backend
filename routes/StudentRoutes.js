@@ -73,32 +73,69 @@ router.get("/class-clash/:school/:classLevel", async (req, res) => {
   }
 });
 
-router.get("/round2-posts/:school", async (req, res) => {
-  const { school } = req.params;
+router.get("/round2-posts/:school/:category", async (req, res) => {
+  const { school, category } = req.params;
+
   try {
-    // Fetch all students of the school
-    const students = await Student.find({ school }).select("_id name profilePic");
+    // Determine eligible classes based on category
+    let eligibleClasses = [];
+    if (category === "junior") {
+      eligibleClasses = [7, 8];
+    } else if (category === "senior") {
+      eligibleClasses = [9, 10];
+    } else {
+      return res.status(400).json({ message: "Invalid category" });
+    }
 
-    const studentIds = students.map(s => s._id);
+    // Fetch students of that category in the given school
+    const students = await Student.find({
+      school,
+      classLevel: { $in: eligibleClasses },
+    }).select("_id name profilePic");
 
-    // Fetch round 2 posts (round: 2) for these students
-    const posts = await Post.find({ studentId: { $in: studentIds }, round: 2 })
-      .populate("studentId", "name profilePic school");
+    const studentIds = students.map((s) => s._id);
+
+    // Get posts for Round 2 from those students
+    const posts = await Post.find({
+      studentId: { $in: studentIds },
+      round: 2,
+    }).populate("studentId", "name profilePic school");
 
     res.json(posts);
   } catch (err) {
-    console.error("Round 2 fetch error:", err);
+    console.error("Round 2 category-based fetch error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 
-
 // Get all finale posts across all schools (round: 3)
-router.get("/finale-posts", async (req, res) => {
+router.get("/finale-posts/:category", async (req, res) => {
+  const { category } = req.params;
+
   try {
-    const posts = await Post.find({ round: 3 })
-      .populate("studentId", "name profilePic school");
+    // Validate category and define class range
+    let classLevels = [];
+    if (category === "junior") {
+      classLevels = [7, 8];
+    } else if (category === "senior") {
+      classLevels = [9, 10];
+    } else {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
+    // Get all students in that class category
+    const students = await Student.find({
+      classLevel: { $in: classLevels }
+    }).select("_id name profilePic school");
+
+    const studentIds = students.map(s => s._id);
+
+    // Get all posts in round 3 for these students
+    const posts = await Post.find({
+      studentId: { $in: studentIds },
+      round: 3
+    }).populate("studentId", "name profilePic school");
 
     res.json(posts);
   } catch (err) {
@@ -106,6 +143,7 @@ router.get("/finale-posts", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 
