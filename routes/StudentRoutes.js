@@ -117,27 +117,27 @@ router.get("/finale-posts/:category", async (req, res) => {
   const { category } = req.params;
 
   try {
-    // Validate category and define class range
-    let classLevels = [];
+    // Validate and map category to actual classLevel strings
+    let eligibleClasses = [];
     if (category === "junior") {
-      classLevels = [7, 8];
+      eligibleClasses = ["seventh", "eighth"];
     } else if (category === "senior") {
-      classLevels = [9, 10];
+      eligibleClasses = ["ninth", "tenth"];
     } else {
       return res.status(400).json({ message: "Invalid category" });
     }
 
-    // Get all students in that class category
+    console.log("Fetching finale posts for category:", category, "Classes:", eligibleClasses);
+
     const students = await Student.find({
-      classLevel: { $in: classLevels }
+      classLevel: { $in: eligibleClasses }
     }).select("_id name profilePic school");
 
     const studentIds = students.map(s => s._id);
 
-    // Get all posts in round 3 for these students
     const posts = await Post.find({
       studentId: { $in: studentIds },
-      round: 3
+      round: 3,
     }).populate("studentId", "name profilePic school");
 
     res.json(posts);
@@ -146,7 +146,6 @@ router.get("/finale-posts/:category", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 
 
