@@ -72,12 +72,11 @@ router.get("/class-clash/:school/:classLevel", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 router.get("/round2-posts/:school/:category", async (req, res) => {
   const { school, category } = req.params;
 
   try {
-    // Determine eligible classes based on category
+    // Define eligible class names based on category
     let eligibleClasses = [];
     if (category === "junior") {
       eligibleClasses = ["seventh", "eighth"];
@@ -87,15 +86,13 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
       return res.status(400).json({ message: "Invalid category" });
     }
 
-    // Fetch students of that category in the given school
     const students = await Student.find({
-      school,
-      classLevel: { $in: eligibleClasses },
+      "school.name": school,
+      class: { $in: eligibleClasses },
     }).select("_id name profilePic");
 
     const studentIds = students.map((s) => s._id);
 
-    // Get posts for Round 2 from those students
     const posts = await Post.find({
       studentId: { $in: studentIds },
       round: 2,
@@ -103,11 +100,10 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
 
     res.json(posts);
   } catch (err) {
-    console.error("Round 2 category-based fetch error:", err);
+    console.error("Round 2 fetch error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // Get all finale posts across all schools (round: 3)
 router.get("/finale-posts/:category", async (req, res) => {
