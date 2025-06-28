@@ -80,9 +80,9 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
     // Determine eligible classes based on category
     let eligibleClasses = [];
     if (category === "junior") {
-      eligibleClasses = [7, 8];
+      eligibleClasses = ["seventh", "eighth"];
     } else if (category === "senior") {
-      eligibleClasses = [9, 10];
+      eligibleClasses = ["ninth", "tenth"];
     } else {
       return res.status(400).json({ message: "Invalid category" });
     }
