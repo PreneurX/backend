@@ -72,6 +72,9 @@ router.get("/class-clash/:school/:classLevel", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
 router.get("/round2-posts/:school/:category", async (req, res) => {
   const { school, category } = req.params;
 
@@ -85,11 +88,13 @@ router.get("/round2-posts/:school/:category", async (req, res) => {
     } else {
       return res.status(400).json({ message: "Invalid category" });
     }
+    console.log(eligibleClasses);
 
     const students = await Student.find({
       "school.name": school,
       class: { $in: eligibleClasses },
     }).select("_id name profilePic");
+    console.log(students);
 
     const studentIds = students.map((s) => s._id);
 
