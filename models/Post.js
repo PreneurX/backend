@@ -22,6 +22,18 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   }
+  r1fp: {
+    type: Number,
+    default: 0,
+  }
+r2fp: {
+    type: Number,
+    default: 0,
+  }
+r3fp: {
+    type: Number,
+    default: 0,
+  }
 });
 
 module.exports = mongoose.model("Post", postSchema);
