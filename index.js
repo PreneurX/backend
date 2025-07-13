@@ -27,6 +27,11 @@ app.use("/api/student",studentAuth);
 console.log(typeof schoolRoundRoutes);
 app.use("/api/rounds", schoolRoundRoutes);
 
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("Backend is alive");
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
