@@ -31,7 +31,7 @@ const { name, contactNumber, password, role, school, class: studentClass, sectio
 
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully", userId: newUser._id });
+    res.status(201).json({ message: "User registered successfully from here", userId: newUser._id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
