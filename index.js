@@ -5,6 +5,7 @@ require("dotenv").config();
 const userAuthRoutes = require("./routes/userAuth");
 const studentAuth=require('./routes/StudentRoutes');
 const schoolRoundRoutes = require("./routes/SchoolRound");
+const teacherRoutes = require("./routes/teacherRoutes");
 
 const app = express();
 app.use(cors());
@@ -30,6 +31,10 @@ app.use("/api/rounds", schoolRoundRoutes);
 app.get("/api/ping", (req, res) => {
   res.status(200).send("Backend is alive");
 });
+
+
+app.use("/api/teacher", teacherRoutes);
+
 
 
 
