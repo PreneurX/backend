@@ -64,7 +64,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/register-user", async (req, res) => {
   try {
-    const { role, name, mobile, dob, school, classLevel } = req.body;
+    const { role, name, mobile, dob, school, classLevel,section } = req.body;
 
     if (!["student", "teacher"].includes(role)) {
       return res.status(400).json({ message: "Invalid role." });
@@ -81,7 +81,7 @@ router.post("/register-user", async (req, res) => {
       return res.status(400).json({ message: `${role} already exists.` });
     }
 
-    const newUser = new Model({ name, mobile, dob, school, classLevel });
+    const newUser = new Model({ name, mobile, dob, school, classLevel,section });
     await newUser.save();
 
     res.status(201).json({ message: `${role} registered successfully.` });
