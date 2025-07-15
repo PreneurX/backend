@@ -16,7 +16,7 @@ const { name, contactNumber, password, role, school, class: studentClass, sectio
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-      console.log(req.body);
+    console.log(req.body);
 
    const newUser = new User({
   name,
@@ -31,7 +31,8 @@ const { name, contactNumber, password, role, school, class: studentClass, sectio
 
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully from here", userId: newUser._id });
+    res.status(201).json({ message: "User registered successfully", userId: newUser._id });
+    console.log(newUser);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
