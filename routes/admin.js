@@ -7,7 +7,7 @@ const router = express.Router();
 
 // POST /api/admin/register-user
 router.post("/register-user", authMiddleware, adminOnly, async (req, res) => {
-  const { name, contactNumber, password, role, school, class: studentClass } = req.body;
+const { name, contactNumber, password, role, school, class: studentClass, section } = req.body;
 
   if (!["student", "teacher"].includes(role)) {
     return res.status(400).json({ message: "Only student or teacher can be registered" });
@@ -16,14 +16,16 @@ router.post("/register-user", authMiddleware, adminOnly, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
-      name,
-      contactNumber,
-      password: hashedPassword,
-      role,
-      class: role === "student" ? studentClass : undefined,
-      school
-    });
+   const newUser = new User({
+  name,
+  contactNumber,
+  password: hashedPassword,
+  role,
+  class: role === "student" ? studentClass : undefined,
+  section: role === "student" ? section : undefined,
+  school
+});
+
 
     await newUser.save();
 

@@ -6,6 +6,10 @@ const studentSchema = new mongoose.Schema({
   dob: Date,
   school: String,
   classLevel: String,
+  section: {
+  type: String,
+  default: null, // or "A"
+},
   profilePic: {
     type: String,
     default: "https://img.freepik.com/premium-vector/profile-picture-placeholder-avatar-silhouette-gray-tones-icon-colored-shapes-gradient_1076610-40164.jpg?semt=ais_hybrid&w=740" // or your default image URL
