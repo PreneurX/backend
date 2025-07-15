@@ -92,3 +92,4 @@ router.get("/eligible-posts/:teacherId", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+module.exports = router;

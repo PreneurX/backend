@@ -8,7 +8,7 @@ const studentSchema = new mongoose.Schema({
   classLevel: String,
   section: {
   type: String,
-  default: null, // or "A"
+  default: null, 
 },
   profilePic: {
     type: String,
